@@ -183,7 +183,7 @@ perl.dispose();
 ### Creating a Virtual Filesystem
 
 ```typescript
-import { ZeroPerl, MemoryFileSystem } from '@6over3/zeroperl-ts';
+import { ZeroPerl, MemoryFileSystem } from '@colorhythm/zeroperl-ts';
 
 const fs = new MemoryFileSystem({ "/": "" });
 

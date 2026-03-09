@@ -2,7 +2,7 @@
 
 Perl 5 compiled to WebAssembly. Run Perl scripts in the browser or other JavaScript environments without installing Perl.
 
-Built on [zeroperl](https://github.com/6over3/zeroperl).
+Built on [zeroperl](https://github.com/colorhythm/zeroperl).
 
 ## Features
 
@@ -18,22 +18,22 @@ Built on [zeroperl](https://github.com/6over3/zeroperl).
 ## Installation
 
 ```bash
-npm install @6over3/zeroperl-ts
+npm install @colorhythm/zeroperl-ts
 # or
-bun add @6over3/zeroperl-ts
+bun add @colorhythm/zeroperl-ts
 ```
 
 Or, for [Browser Usage](#browser-usage), copy the zeroperl WASM binary to your local website (to avoid CORS errors).
 
 ```bash
 # The -L option allows the CDN to redirect to the latest version
-curl -L -O https://esm.sh/@6over3/zeroperl-ts/zeroperl.wasm
+curl -L -O https://esm.sh/@colorhythm/zeroperl-ts/zeroperl.wasm
 ```
 
 ## Quick Start
 
 ```typescript
-import { ZeroPerl } from '@6over3/zeroperl-ts';
+import { ZeroPerl } from '@colorhythm/zeroperl-ts';
 
 const perl = await ZeroPerl.create();
 await perl.eval('print "Hello, World!\\n"');
@@ -64,7 +64,7 @@ await perl.eval(`
 ### Evaluating Perl Code
 
 ```typescript
-import { ZeroPerl } from '@6over3/zeroperl-ts';
+import { ZeroPerl } from '@colorhythm/zeroperl-ts';
 
 const perl = await ZeroPerl.create();
 
@@ -404,8 +404,8 @@ perl.dispose();
 **With bundler (recommended):**
 
 ```typescript
-import { ZeroPerl } from '@6over3/zeroperl-ts';
-import zeroperl from '@6over3/zeroperl-ts/zeroperl.wasm';
+import { ZeroPerl } from '@colorhythm/zeroperl-ts';
+import zeroperl from '@colorhythm/zeroperl-ts/zeroperl.wasm';
 
 const perl = await ZeroPerl.create({
   fetch: () => fetch(zeroperl),
@@ -432,7 +432,7 @@ Note: Most bundlers should copy the WASM file when imported explicitly. If your 
   <div id="output"></div>
   
   <script type="module">
-    import { ZeroPerl } from 'https://esm.sh/@6over3/zeroperl-ts';
+    import { ZeroPerl } from 'https://esm.sh/@colorhythm/zeroperl-ts';
     
     const output = document.getElementById('output');
     
@@ -662,7 +662,7 @@ perl.shutdown();
 ### Processing JSON
 
 ```typescript
-import { ZeroPerl, MemoryFileSystem } from '@6over3/zeroperl-ts';
+import { ZeroPerl, MemoryFileSystem } from '@colorhythm/zeroperl-ts';
 
 const fs = new MemoryFileSystem({ "/": "" });
 fs.addFile("/data.json", JSON.stringify({ users: ['Alice', 'Bob'] }));
@@ -737,4 +737,4 @@ Apache-2.0
 
 ## About
 
-ZeroPerl compiles Perl 5 to WebAssembly using a WASI-compliant implementation. This package provides a TypeScript/JavaScript API for the [ZeroPerl](https://github.com/6over3/zeroperl) WASM module.
+ZeroPerl compiles Perl 5 to WebAssembly using a WASI-compliant implementation. This package provides a TypeScript/JavaScript API for the [ZeroPerl](https://github.com/colorhythm/zeroperl) WASM module.

@@ -1,5 +1,5 @@
 {
-  "name": "@6over3/zeroperl-ts",
+  "name": "@colorhythm/zeroperl-ts",
   "version": "1.0.10",
   "description": "Perl 5 interpreter powered by WebAssembly for JavaScript runtimes",
   "scripts": {
@@ -71,13 +71,13 @@
   "files": [
     "dist"
   ],
-  "homepage": "https://github.com/6over3/zeroperl-ts#readme",
+  "homepage": "https://github.com/colorhythm/zeroperl-ts#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/6over3/zeroperl-ts.git"
+    "url": "git+https://github.com/colorhythm/zeroperl-ts.git"
   },
   "bugs": {
-    "url": "https://github.com/6over3/zeroperl-ts/issues"
+    "url": "https://github.com/colorhythm/zeroperl-ts/issues"
   },
   "devDependencies": {
     "@types/bun": "^1.3.2",

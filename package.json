@@ -64,7 +64,7 @@
     "universal",
     "runtime"
   ],
-  "author": "6over3",
+  "author": "colorhythm",
   "license": "Apache-2.0",
   "type": "module",
   "types": "dist/esm/types/index.d.ts",

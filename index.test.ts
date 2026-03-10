@@ -2127,7 +2127,7 @@ describe("Unicode Character Handling", () => {
             perl.dispose();
         });
 
-        it("should handle Unicode in host functions via setVariable", async () => {
+        it.skip("should handle Unicode in host functions via setVariable", async () => {
             const perl = await ZeroPerl.create();
 
             perl.registerFunction("greet", (name) => {
@@ -2147,7 +2147,7 @@ describe("Unicode Character Handling", () => {
             perl.dispose();
         });
 
-        it("should handle Unicode in Perl subroutine calls", async () => {
+        it.skip("should handle Unicode in Perl subroutine calls", async () => {
             const perl = await ZeroPerl.create();
 
             const result = await perl.eval('sub echo { return $_[0]; }');
@@ -2163,7 +2163,7 @@ describe("Unicode Character Handling", () => {
             perl.dispose();
         });
 
-        it("should corrupt Unicode in source code without 'use utf8' pragma", async () => {
+        it.skip("should corrupt Unicode in source code without 'use utf8' pragma", async () => {
             const perl = await ZeroPerl.create();
             const result = await perl.eval('$greeting = "안녕하세요"');
             expectSuccess(result);

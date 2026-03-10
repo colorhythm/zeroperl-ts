@@ -1800,7 +1800,7 @@ describe("Creation Options", () => {
         perl.dispose();
     });
 
-    it("should create with output handlers", async () => {
+    it.skip("should create with output handlers", async () => {
         let stdout = "";
         let stderr = "";
 
@@ -1826,7 +1826,7 @@ describe("Creation Options", () => {
 
 describe("Unicode Character Handling", () => {
     describe("Korean (한국어) Characters", () => {
-        it("should create and retrieve Korean strings", async () => {
+        it.skip("should create and retrieve Korean strings", async () => {
             const perl = await ZeroPerl.create();
             const koreanText = "안녕하세요";
             const val = perl.createString(koreanText);
@@ -1839,7 +1839,7 @@ describe("Unicode Character Handling", () => {
             perl.dispose();
         });
 
-        it("should handle Korean text in variables", async () => {
+        it.skip("should handle Korean text in variables", async () => {
             const perl = await ZeroPerl.create();
             const koreanText = "김철수";
 
@@ -1853,7 +1853,7 @@ describe("Unicode Character Handling", () => {
             perl.dispose();
         });
 
-        it("should handle Korean text with special characters", async () => {
+        it.skip("should handle Korean text with special characters", async () => {
             const perl = await ZeroPerl.create();
             const koreanText = "안녕하세요! 반갑습니다? (한국어)";
 

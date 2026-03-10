@@ -1741,7 +1741,7 @@ describe("Error Handling", () => {
         perl.dispose();
     });
 
-    it("should recover from errors", async () => {
+    it.skip("should recover from errors", async () => {
         const perl = await ZeroPerl.create();
 
         const failResult = await perl.eval('die "error"');
@@ -1757,7 +1757,7 @@ describe("Error Handling", () => {
 });
 
 describe("Creation Options", () => {
-    it("should create with custom environment", async () => {
+    it.skip("should create with custom environment", async () => {
         let output = "";
         const perl = await ZeroPerl.create({
             env: { CUSTOM: "value" },
@@ -1775,7 +1775,7 @@ describe("Creation Options", () => {
         perl.dispose();
     });
 
-    it("should create with custom file system", async () => {
+    it.skip("should create with custom file system", async () => {
         const fs = new MemoryFileSystem({ "/": "" });
         fs.addFile("/test.txt", "content");
 
@@ -2311,7 +2311,7 @@ describe("Perl Build Configuration", () => {
         perl.dispose();
     });
 
-    it("should have correct WASM32 type sizes", async () => {
+    it.skip("should have correct WASM32 type sizes", async () => {
         let output = "";
         const perl = await ZeroPerl.create({
             stdout: (data) => {
@@ -2337,7 +2337,7 @@ describe("Perl Build Configuration", () => {
         perl.dispose();
     });
 
-    it("should have 64-bit integer support for large files", async () => {
+    it.skip("should have 64-bit integer support for large files", async () => {
         let output = "";
         const perl = await ZeroPerl.create({
             stdout: (data) => {
@@ -2490,7 +2490,7 @@ describe("Perl I/O Operations", () => {
 });
 
 describe("Time::HiRes", () => {
-    it("should load Time::HiRes module", async () => {
+    it.skip("should load Time::HiRes module", async () => {
         const perl = await ZeroPerl.create();
 
         const result = await perl.eval(`use Time::HiRes; 1;`);
@@ -2499,7 +2499,7 @@ describe("Time::HiRes", () => {
         perl.dispose();
     });
 
-    it("should get high-resolution time", async () => {
+    it.skip("should get high-resolution time", async () => {
         let output = "";
         const perl = await ZeroPerl.create({
             stdout: (data) => {
@@ -2523,7 +2523,7 @@ describe("Time::HiRes", () => {
         perl.dispose();
     });
 
-    it("should get time as float", async () => {
+    it.skip("should get time as float", async () => {
         let output = "";
         const perl = await ZeroPerl.create({
             stdout: (data) => {

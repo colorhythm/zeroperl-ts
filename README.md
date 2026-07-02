@@ -1,3 +1,9 @@
+> **Fork notice & thanks** — this is Colorhythm's fork of
+> [**zeroperl-ts** by Andrew Sampson (6over3)](https://github.com/6over3/zeroperl-ts).
+> The TypeScript embedding of Perl-in-WebAssembly is his work; our
+> changes serve the `@colorhythm/exiftool-wasm` toolchain. Thank you,
+> Andrew.
+
 # zeroperl-ts
 
 Perl 5 compiled to WebAssembly. Run Perl scripts in the browser or other JavaScript environments without installing Perl.

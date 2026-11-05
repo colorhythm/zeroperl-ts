@@ -10,9 +10,18 @@ Perl 5 compiled to WebAssembly. Run Perl scripts in the browser or other JavaScr
 
 Built on [zeroperl](https://github.com/colorhythm/zeroperl).
 
+## Role in the Colorhythm forks
+
+This repository provides the standalone TypeScript embedding and a checked-in
+development WASM binary. It is not the release controller for ExifTool.
+[@colorhythm/exiftool-wasm](https://www.npmjs.com/package/@colorhythm/exiftool-wasm)
+vendors its adapter, including separate Worker-loading and byte-safe output
+fixes, and pairs it with a runtime built from a recorded zeroperl revision.
+Updating this checkout's binary does not update a published ExifTool package.
+
 ## Features
 
-- Runs Perl 5 in browser, Node.js, Deno, and Bun
+- Perl 5 with loader branches for browser Window, Node.js, Deno, and Bun
 - Virtual filesystem for script and data files
 - Bidirectional data exchange between JavaScript and Perl
 - Register JavaScript functions callable from Perl
@@ -23,33 +32,50 @@ Built on [zeroperl](https://github.com/colorhythm/zeroperl).
 
 ## Installation
 
+The declared package name is `@colorhythm/zeroperl-ts`, but this fork is not
+currently published under that name on the public npm registry. npm install and
+public CDN URLs for that name do not work. For metadata extraction, install the
+published `@colorhythm/exiftool-wasm` package instead.
+
+For standalone development, build and pack this checkout:
+
 ```bash
-npm install @colorhythm/zeroperl-ts
-# or
-bun add @colorhythm/zeroperl-ts
+git clone https://github.com/colorhythm/zeroperl-ts.git
+cd zeroperl-ts
+npm install
+bun test
+bun run build
+npm pack --ignore-scripts
 ```
 
-Or, for [Browser Usage](#browser-usage), copy the zeroperl WASM binary to your local website (to avoid CORS errors).
-
-```bash
-# The -L option allows the CDN to redirect to the latest version
-curl -L -O https://esm.sh/@colorhythm/zeroperl-ts/zeroperl.wasm
-```
+Install the resulting `.tgz` by its local path in a consuming app. The examples
+below assume that local package is installed. The repository currently does not
+track a dependency lockfile; these development installs resolve the declared
+dependency ranges.
 
 ## Quick Start
 
 ```typescript
 import { ZeroPerl } from '@colorhythm/zeroperl-ts';
 
-const perl = await ZeroPerl.create();
-await perl.eval('print "Hello, World!\\n"');
-perl.flush(); // Required to see output
-perl.dispose();
+const perl = await ZeroPerl.create({
+    stdout: (data) => console.log(typeof data === 'string' ? data : new TextDecoder().decode(data)),
+    stderr: (data) => console.error(typeof data === 'string' ? data : new TextDecoder().decode(data)),
+});
+try {
+    const result = await perl.eval('print "Hello, World!\\n"');
+    perl.flush();
+    if (!result.success) throw new Error(result.error);
+} finally {
+    perl.dispose();
+}
 ```
 
 ## Output Buffering
 
-Perl buffers output by default. Choose one approach:
+Without stdout/stderr callbacks, this wrapper discards that output. Other
+snippets focus on individual APIs; add the callbacks above when output should
+be visible. Perl also buffers output. Choose one approach:
 
 **Option 1: Call `flush()` after printing**
 ```typescript
@@ -245,8 +271,13 @@ await perl.eval(`
 `);
 
 // Read from JavaScript
-const content = fs.readFile('/output.txt');
-console.log(content); // "Generated content\n"
+const outputFile = fs.lookup('/output.txt');
+if (outputFile?.type === 'file') {
+    const bytes = outputFile.content instanceof Blob
+        ? new Uint8Array(await outputFile.content.arrayBuffer())
+        : outputFile.content;
+    console.log(new TextDecoder().decode(bytes)); // "Generated content\n"
+}
 
 perl.dispose();
 ```
@@ -407,59 +438,45 @@ perl.dispose();
 
 ## Browser Usage
 
-**With bundler (recommended):**
+Serve the WASM file from your app instead of a public CDN for this unpublished
+fork. After installing your locally built tarball, copy its ESM runtime asset:
+
+```bash
+mkdir -p public
+cp node_modules/@colorhythm/zeroperl-ts/dist/esm/zeroperl.wasm public/zeroperl.wasm
+```
+
+Bundle the JavaScript entry normally, and supply the URL where your app serves
+that matching WASM file. For example, when it is served next to the HTML page:
 
 ```typescript
 import { ZeroPerl } from '@colorhythm/zeroperl-ts';
-import zeroperl from '@colorhythm/zeroperl-ts/zeroperl.wasm';
 
+const wasmUrl = new URL('./zeroperl.wasm', document.baseURI);
 const perl = await ZeroPerl.create({
-  fetch: () => fetch(zeroperl),
-  stdout: (data) => console.log(data)
+    fetch: () => fetch(wasmUrl),
+    stdout: (data) => console.log(data),
 });
-
-await perl.eval(`
-  $| = 1;
-  print "Hello from Perl!\\n";
-  print "Running in: $^O\\n";
-`);
-
-perl.dispose();
-```
-
-Note: Most bundlers should copy the WASM file when imported explicitly. If your bundler doesn't handle this, configure it to copy static assets or use the CDN approach below.
-
-**From CDN:**
-
-```html
-<!DOCTYPE html>
-<html>
-<body>
-  <div id="output"></div>
-  
-  <script type="module">
-    import { ZeroPerl } from 'https://esm.sh/@colorhythm/zeroperl-ts';
-    
-    const output = document.getElementById('output');
-    
-    const perl = await ZeroPerl.create({
-      stdout: (data) => {
-        const text = typeof data === 'string' ? data : new TextDecoder().decode(data);
-        output.innerHTML += text.replace(/\n/g, '<br>');
-      }
-    });
-    
-    await perl.eval(`
-      $| = 1;
-      print "Hello from Perl!\\n";
-      print "Running in: $^O\\n";
-    `);
-
+try {
+    const result = await perl.eval('$| = 1; print "Hello from Perl!";');
+    if (!result.success) throw new Error(result.error);
+} finally {
     perl.dispose();
-  </script>
-</body>
-</html>
+}
 ```
+
+Adjust the URL for your app's base path. Keep the JavaScript and WASM from the
+same build; copying a different runtime is not an adapter compatibility check.
+
+The current standalone loader identifies a browser through both `window` and
+`document`. A browser Worker falls into its filesystem branch, and the custom
+fetch callback does not override that branch. Worker loading requires an adapter
+fix; do not assume the Worker support in exiftool-wasm is present here.
+
+The standalone stdout/stderr path is text-oriented and does not expose an option
+to enable the WASI layer's raw-buffer output. A callback type that includes
+Uint8Array does not establish byte-safe binary output. Use exiftool-wasm's
+`binary: true` API for its supported binary metadata extraction.
 
 ## API Reference
 
@@ -472,7 +489,7 @@ Create a new Perl interpreter instance.
 - `fileSystem` - Virtual filesystem (MemoryFileSystem)
 - `stdout` - stdout callback ((data: string | Uint8Array) => void)
 - `stderr` - stderr callback ((data: string | Uint8Array) => void)
-- `fetch` - Custom fetch for WASM loading
+- `fetch` - Custom fetch for WASM loading in browser Window contexts
 
 ```typescript
 const perl = await ZeroPerl.create({
@@ -732,10 +749,16 @@ perl.dispose();
 ## Development
 
 ```bash
-npm i              # Install dependencies
-bun run build      # Build distributions
-bun test           # Run tests
+npm install
+bun test
+bun run build
 ```
+
+The companion tests execute under Bun. Some cases are explicitly skipped, so a
+green run does not establish those capabilities or a Node/Deno/browser test
+matrix. The separate exiftool-wasm release gate tests its vendored adapter in
+Node, Chrome, and Playwright WebKit; that coverage does not transfer wholesale
+to this standalone package.
 
 ## License
 
